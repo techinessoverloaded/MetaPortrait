@@ -36,10 +36,10 @@ class SignUpActivity : AppCompatActivity()
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         mAuth = FirebaseAuth.getInstance()
-        progressDialog = if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R)
-            ProgressDialog(this,ProgressDialog.THEME_FOLLOW_SYSTEM)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            progressDialog = ProgressDialog(this,ProgressDialog.THEME_FOLLOW_SYSTEM)
         else
-            ProgressDialog(this)
+            progressDialog = ProgressDialog(this)
         binding.switchToLoginButton.setOnClickListener {
             val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -187,16 +187,15 @@ class SignUpActivity : AppCompatActivity()
                                 }
                                 else
                                 {
-                                    progressDialog.dismiss()
-                                    System.out.println(task.result.toString())
                                     Log.d("ErrorWithDB",task.exception.toString())
+                                    mAuth.currentUser!!.delete()
+                                    progressDialog.dismiss()
                                     Toast.makeText(this,"Failed to Register User ! Try Again !",Toast.LENGTH_LONG).show()
                                 }
                             }
                     }
                     else
                     {
-                        System.out.println(task.result.toString())
                         progressDialog.dismiss()
                         Log.d("ErrorWithAuth",task.exception.toString())
                         Toast.makeText(this,"Failed to Register User ! Try Again !",Toast.LENGTH_LONG).show()
