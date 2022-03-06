@@ -52,7 +52,7 @@ class SignUpActivity : AppCompatActivity()
         binding.emailInputSignup.addTextChangedListener(InputValidation(binding.emailInputSignup))
         binding.pwdInputSignup.addTextChangedListener(InputValidation(binding.pwdInputSignup))
         binding.cnfmPwdInputSignup.addTextChangedListener(InputValidation(binding.cnfmPwdInputSignup))
-        progressDialog.setMessage("Registering User")
+        progressDialog.setMessage("Registering User...")
     }
     private fun requestFocus(view: View)
     {
@@ -144,22 +144,12 @@ class SignUpActivity : AppCompatActivity()
         else
         {
             var name: String
-            val password: String
             var email: String
-            val tempKey: String
             val preferenceUtils = PreferenceUtils.getInstance(this)
             email = binding.emailInputSignup.text.toString().trim()
-            password = binding.pwdInputSignup.text.toString().trim()
+            val password = binding.pwdInputSignup.text.toString().trim()
             name = binding.nameInputSignup.text.toString().trim()
-            if(preferenceUtils.tempKey=="")
-            {
-                tempKey = RandomStringGenerator.getRandomString(18)
-                preferenceUtils.tempKey = tempKey
-            }
-            else
-            {
-                tempKey = preferenceUtils.tempKey
-            }
+            val tempKey = RandomStringGenerator.getRandomString(18)
             progressDialog.show()
             mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener{ task: Task<AuthResult?> ->
@@ -213,7 +203,7 @@ class SignUpActivity : AppCompatActivity()
             {
                 R.id.emailInputSignup -> validateEmail()
                 R.id.nameInputSignup -> validateName()
-                R.id.pwdInputLogin -> validatePassword()
+                R.id.pwdInputSignup -> validatePassword()
                 R.id.cnfmPwdInputSignup -> validateEmail()
             }
         }

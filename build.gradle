@@ -3,8 +3,14 @@ buildscript {
     dependencies {
         classpath 'com.google.gms:google-services:4.3.10'
     }
+    allprojects {
+        gradle.projectsEvaluated {
+            tasks.withType(JavaCompile) {
+                options.deprecation true
+            }
+        }
+    }
 }
-
 plugins {
     id 'com.android.application' version '7.1.0' apply false
     id 'com.android.library' version '7.1.0' apply false

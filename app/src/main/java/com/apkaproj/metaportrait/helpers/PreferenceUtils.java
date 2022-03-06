@@ -2,7 +2,8 @@ package com.apkaproj.metaportrait.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
+
 //import com.google.gson.Gson;
 //import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -13,9 +14,7 @@ public class PreferenceUtils
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static PreferenceUtils instance=null;
-    //private static String OBJECT_BACKUP="OBJECT_BACKUP";
     private static String IS_FIRST_TIME="IS_FIRST_TIME";
-    private static String TEMPKEY="TEMPKEY";
     private static String NEEDS_DB_UPDATE="NEEDS_DB_UPDATE";
     private PreferenceUtils(Context context)
     {
@@ -61,16 +60,6 @@ public class PreferenceUtils
     {
         editor = sharedPreferences.edit();
         editor.putBoolean(IS_FIRST_TIME,value);
-        editor.apply();
-    }
-    public String getTempKey()
-    {
-        return sharedPreferences.getString(TEMPKEY,"");
-    }
-    public void setTempKey(String value)
-    {
-        editor = sharedPreferences.edit();
-        editor.putString(TEMPKEY,value);
         editor.apply();
     }
     public boolean getNeedsDbUpdate()
