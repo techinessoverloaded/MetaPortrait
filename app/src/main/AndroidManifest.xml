@@ -18,7 +18,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.SplashActivity"
-            android:exported="true">
+            android:exported="true" android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name=".activities.MainActivity"
-            android:exported="true" />
+            android:exported="true" android:theme="@style/FullScreen"/>
         <activity
             android:name=".activities.SignUpActivity"
             android:exported="false" />

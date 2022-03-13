@@ -45,9 +45,8 @@ class ForgotPasswordActivity : AppCompatActivity()
         else
         {
             val email = binding.emailInputForgot.text.toString().trim()
-            progressDialog.setMessage("Sending Password Email...")
+            progressDialog.setMessage("Sending Password Reset Email...")
             progressDialog.show()
-
             mAuth.sendPasswordResetEmail(email).addOnCompleteListener {
                 if(it.isSuccessful)
                 {
