@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import com.apkaproj.metaportrait.databinding.ActivityMainBinding
 import com.apkaproj.metaportrait.helpers.EncryptionUtils
+import com.apkaproj.metaportrait.helpers.PreferenceUtils
 import com.apkaproj.metaportrait.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -31,20 +32,38 @@ class MainActivity : AppCompatActivity()
         user = mAuth.currentUser!!
         firestore = FirebaseFirestore.getInstance()
         userId = user.uid
+    }
+
+    fun getData(source : Source)
+    {
         firestore.collection("Users")
-            .document(userId).get(Source.DEFAULT)
+            .document(userId).get(source)
             .addOnCompleteListener {
                 if (it.isSuccessful)
                 {
                     userObject = it.result!!.toObject(User::class.java)!!
                     userName = EncryptionUtils.decrypt(userObject.name, userObject.tempKey)
-                    binding.textView.text = "Welcome to MetaPortrait, $userName !"
+                    binding.textTitle.text = "Welcome to MetaPortrait, $userName !"
+                }
+                else
+                {
+                    binding.textTitle.text = "Welcome to MetaPortrait, User !"
                 }
             }
-        val progressDialog = ProgressDialog(this)
-        progressDialog.theme = ProgressDialog.THEME_FOLLOW_SYSTEM
-        progressDialog.setCancelable(true)
-        progressDialog.show()
-        Log.d("pdialog",progressDialog.theme.toString())
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        val preferenceUtils = PreferenceUtils.getInstance(this)
+        if(preferenceUtils.needsDbUpdate)
+        {
+            getData(Source.SERVER)
+            preferenceUtils.needsDbUpdate = false
+        }
+        else
+        {
+            getData(Source.CACHE)
+        }
     }
 }

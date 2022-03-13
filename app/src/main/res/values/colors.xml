@@ -7,8 +7,9 @@
     <color name="secondaryText">#757575</color>
     <color name="landingBackgroundCenter">#DC000000</color>
     <color name="landingBackgroundEnd">#F6000000</color>
-    <color name="buttonSavedImages">#81C784</color>
-    <color name="buttonEditNewImage">#FFB74D</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="buttonSavedImages">#2AC531</color>
+    <color name="buttonEditNewImage">#FA9C11</color>
+    <color name="buttonOpenCamera">#0091EA</color>
+    <color name="black_color">#FF000000</color>
+    <color name="white_color">#FFFFFFFF</color>
 </resources>
