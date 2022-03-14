@@ -5,4 +5,5 @@
     <string name="open_camera">Open Camera</string>
     <string name="let_s_edit_some_images">Let\'s edit some images !</string>
     <string name="welcome_to_metaportrait">Welcome to MetaPortrait,</string>
+    <string name="apply_filter">Apply Filter</string>
 </resources>

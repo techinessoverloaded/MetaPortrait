@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageFilterPreview"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_place_holder"
+        app:riv_corner_radius="10dp"
+        />
+
+    <TextView
+        android:id="@+id/textFilterName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="@color/primaryText"
+        android:textSize="14sp"
+        tools:text="Filter 1"
+        />
+</LinearLayout>

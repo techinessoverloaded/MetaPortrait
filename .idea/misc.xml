@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/drawable/landing_background.xml" value="0.1175" />
+        <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_edit_image.xml" value="0.2" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_forgot_password.xml" value="0.2" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_login.xml" value="0.18" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_sign_up.xml" value="0.22" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_splash.xml" value="0.2" />
+        <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/item_container_filter.xml" value="0.33" />
       </map>
     </option>
   </component>
