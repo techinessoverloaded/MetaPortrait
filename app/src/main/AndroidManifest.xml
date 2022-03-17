@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MetaPortrait">
+        android:theme="@style/Theme.MetaPortrait"
+        android:name=".helpers.AppConfig">
         <activity
             android:name=".activities.EditImageActivity"
             android:exported="false" />
