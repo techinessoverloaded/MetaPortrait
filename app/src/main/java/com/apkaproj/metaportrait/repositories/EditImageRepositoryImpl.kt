@@ -4,10 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Environment
+import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.data.ImageFilter
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.*
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
+import java.lang.Exception
 
 class EditImageRepositoryImpl(private val context : Context) : EditImageRepository
 {
@@ -422,5 +427,36 @@ class EditImageRepositoryImpl(private val context : Context) : EditImageReposito
         //endregion
 
         return imageFilters
+    }
+
+    override suspend fun saveFilteredImage(filteredBitmap: Bitmap): Uri?
+    {
+        return try {
+            val mediaStorageDirectory = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "MetaPortrait Saved Images"
+            )
+            if(!mediaStorageDirectory.exists())
+            {
+                mediaStorageDirectory.mkdirs()
+            }
+            val fileName = "METAPORTRAIT_IMG_${System.currentTimeMillis()}.png"
+            val file = File(mediaStorageDirectory, fileName)
+            saveFile(file, filteredBitmap)
+            FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+        }
+        catch (exception: Exception)
+        {
+            null
+        }
+    }
+
+    private fun saveFile(file: File, bitmap: Bitmap)
+    {
+        with(FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
+            flush()
+            close()
+        }
     }
 }

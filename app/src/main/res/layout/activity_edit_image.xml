@@ -37,12 +37,23 @@
             android:textSize="16sp"
             android:textColor="@color/white_color"
             />
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageSave"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:src="@drawable/ic_done"
-            app:tint="@color/white_color"/>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageSave"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_done"
+                app:tint="@color/white_color"/>
+            <ProgressBar
+                android:id="@+id/savingProgressBar"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:visibility="gone"/>
+        </FrameLayout>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
