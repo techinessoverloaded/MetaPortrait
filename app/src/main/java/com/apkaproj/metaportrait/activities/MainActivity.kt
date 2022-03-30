@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity()
             }
         }
 
-        binding.buttonEditNewImage.setOnClickListener{
+        binding.buttonEditNewImage.setOnClickListener {
             Intent (
                 Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -105,6 +105,12 @@ class MainActivity : AppCompatActivity()
                 pickerIntent.putExtra(REQUEST_CODE, REQUEST_CODE_PICK_IMAGE);
                 //startActivityForResult.launch(pickerIntent)
                 getContentUriFromActivity.launch("image/*")
+            }
+        }
+
+        binding.buttonViewSavedImages.setOnClickListener {
+            Intent(this@MainActivity,SavedImageActivity::class.java).also {
+                startActivity(it)
             }
         }
     }

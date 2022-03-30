@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MetaPortrait">
         <activity
+            android:name=".activities.SavedImageActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.FilteredImageActivity"
             android:exported="false" />
         <activity
