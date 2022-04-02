@@ -30,4 +30,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageBack"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/ic_back"
+        app:tint="@color/white_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
