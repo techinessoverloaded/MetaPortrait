@@ -8,6 +8,7 @@ import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.adapters.SavedImagesAdapter
 import com.apkaproj.metaportrait.databinding.ActivitySavedImageBinding
 import com.apkaproj.metaportrait.helpers.displayToast
+import com.apkaproj.metaportrait.helpers.hide
 import com.apkaproj.metaportrait.helpers.show
 import com.apkaproj.metaportrait.listeners.SavedImagesListener
 import com.apkaproj.metaportrait.viewmodels.SavedImagesViewModel
@@ -26,6 +27,11 @@ class SavedImageActivity : AppCompatActivity(), SavedImagesListener
         setContentView(binding.root)
         setupObserver()
         setListeners()
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
         viewModel.loadSavedImages()
     }
 
@@ -33,9 +39,11 @@ class SavedImageActivity : AppCompatActivity(), SavedImagesListener
     {
         viewModel.savedImagesUiState.observe(this) {
             val savedImageDataState = it ?: return@observe
-            binding.savedImagesProgressBar.visibility =
-                if(savedImageDataState.isLoading) View.VISIBLE
-                else View.GONE
+            if(savedImageDataState.isLoading)
+                binding.savedImagesProgressBar.show()
+            else
+                binding.savedImagesProgressBar.hide()
+
             savedImageDataState.savedImages?.let { savedImages ->
                 SavedImagesAdapter(savedImages, this).also { adapter ->
                     with(binding.savedImagesRecyclerView) {

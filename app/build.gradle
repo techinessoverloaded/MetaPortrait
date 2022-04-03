@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.apkaproj.metaportrait"
-        minSdk 24
-        targetSdk 31
+        minSdk 26
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -43,8 +43,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.preference:preference:1.2.0'
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
-    implementation 'com.google.firebase:firebase-auth:21.0.2'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.0.2'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage'
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
     implementation "io.insert-koin:koin-android:3.1.5"

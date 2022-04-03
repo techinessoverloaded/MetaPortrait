@@ -25,6 +25,7 @@
             android:src="@drawable/ic_back"
             app:tint="@color/white_color"
             />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"

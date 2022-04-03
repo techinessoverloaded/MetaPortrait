@@ -109,8 +109,8 @@ class  EditImageViewModel(private val editImageRepository: EditImageRepository) 
     private fun emitSaveFilteredImageUiState(
         isLoading: Boolean = false,
         uri: Uri? = null,
-        error: String? = null
-    ) {
+        error: String? = null)
+    {
         val dataState = SaveFilteredImageDataState(isLoading, uri, error)
         saveFilteredImageDataState.postValue(dataState)
     }

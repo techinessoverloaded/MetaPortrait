@@ -15,6 +15,7 @@ import androidx.activity.result.registerForActivityResult
 import com.apkaproj.metaportrait.databinding.ActivityMainBinding
 import com.apkaproj.metaportrait.helpers.EncryptionUtils
 import com.apkaproj.metaportrait.helpers.PreferenceUtils
+import com.apkaproj.metaportrait.helpers.displayToast
 import com.apkaproj.metaportrait.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -111,6 +112,21 @@ class MainActivity : AppCompatActivity()
         binding.buttonViewSavedImages.setOnClickListener {
             Intent(this@MainActivity,SavedImageActivity::class.java).also {
                 startActivity(it)
+            }
+        }
+
+        binding.buttonOpenCamera.setOnClickListener {
+            val takPictureAndSaveToUri = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccessful ->
+                if(isSuccessful)
+                {
+
+                }
+                else
+                {
+                    displayToast("An error occurred ! Unable to take picture and save it !")
+                }
+            }.also {
+
             }
         }
     }

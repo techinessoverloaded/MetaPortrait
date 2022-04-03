@@ -119,15 +119,18 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         binding.imageBack.setOnClickListener {
             onBackPressed()
         }
+
         binding.imageSave.setOnClickListener {
             filteredBitmap.value?.let { bitmap ->
                 viewModel.saveFilteredImageBitmap(bitmap)
             }
         }
+
         binding.imagePreview.setOnLongClickListener {
             binding.imagePreview.setImageBitmap(originalBitmap)
             return@setOnLongClickListener false
         }
+
         binding.imagePreview.setOnClickListener {
             binding.imagePreview.setImageBitmap(filteredBitmap.value)
         }
