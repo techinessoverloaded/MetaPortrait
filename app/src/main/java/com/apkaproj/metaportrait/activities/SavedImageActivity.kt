@@ -3,7 +3,6 @@ package com.apkaproj.metaportrait.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.adapters.SavedImagesAdapter
 import com.apkaproj.metaportrait.databinding.ActivitySavedImageBinding
@@ -26,13 +25,8 @@ class SavedImageActivity : AppCompatActivity(), SavedImagesListener
         binding = ActivitySavedImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupObserver()
-        setListeners()
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
         viewModel.loadSavedImages()
+        setListeners()
     }
 
     private fun setupObserver()

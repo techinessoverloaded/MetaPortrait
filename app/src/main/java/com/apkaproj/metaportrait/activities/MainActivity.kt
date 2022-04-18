@@ -12,8 +12,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
+import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.databinding.ActivityMainBinding
 import com.apkaproj.metaportrait.helpers.EncryptionUtils
+import com.apkaproj.metaportrait.helpers.IOUtils
 import com.apkaproj.metaportrait.helpers.PreferenceUtils
 import com.apkaproj.metaportrait.helpers.displayToast
 import com.apkaproj.metaportrait.models.User
@@ -22,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.techiness.progressdialoglibrary.ProgressDialog
+import java.io.File
 
 class MainActivity : AppCompatActivity()
 {
@@ -38,6 +41,8 @@ class MainActivity : AppCompatActivity()
     private lateinit var userId : String
     private lateinit var userName : String
     private lateinit var userObject : User
+    private lateinit var takePictureAndSaveToUri : ActivityResultLauncher<Uri>
+    private lateinit var uriForOpenCamera : Uri
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -48,6 +53,19 @@ class MainActivity : AppCompatActivity()
         user = mAuth.currentUser!!
         firestore = FirebaseFirestore.getInstance()
         userId = user.uid
+        takePictureAndSaveToUri = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccessful ->
+            if (isSuccessful)
+            {
+                Intent(this@MainActivity, EditImageActivity::class.java).also { editImageIntent ->
+                    editImageIntent.putExtra(KEY_IMAGE_URI, uriForOpenCamera)
+                    startActivity(editImageIntent)
+                }
+            }
+            else
+            {
+                displayToast("Taking Picture through Camera Cancelled !")
+            }
+        }
         setListeners()
     }
 
@@ -116,18 +134,17 @@ class MainActivity : AppCompatActivity()
         }
 
         binding.buttonOpenCamera.setOnClickListener {
-            val takPictureAndSaveToUri = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccessful ->
-                if(isSuccessful)
-                {
 
-                }
-                else
+                val ioUtils = IOUtils(this)
+                val mediaStorageDirectory = ioUtils.getImagesDirectoryAsFile()
+                val fileName = ioUtils.getUniqueFileName()
+                if(!mediaStorageDirectory.exists())
                 {
-                    displayToast("An error occurred ! Unable to take picture and save it !")
+                    mediaStorageDirectory.mkdirs()
                 }
-            }.also {
-
-            }
+                val file = File(mediaStorageDirectory, fileName)
+                uriForOpenCamera = FileProvider.getUriForFile(applicationContext, "${applicationContext.packageName}.provider", file)
+                takePictureAndSaveToUri.launch(uriForOpenCamera)
         }
     }
 }

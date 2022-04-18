@@ -8,7 +8,7 @@ class IOUtils(private val context: Context)
 {
     private lateinit var listOfFileNameMillis: ArrayList<String>
 
-    private suspend fun loadFileNames()
+    private fun loadFileNames()
     {
         listOfFileNameMillis = ArrayList()
         val dir = getImagesDirectoryAsFile()
@@ -21,7 +21,7 @@ class IOUtils(private val context: Context)
         }
     }
 
-    suspend fun getUniqueFileName(): String
+    fun getUniqueFileName(): String
     {
         loadFileNames()
         var uniqueTimeMillis = System.currentTimeMillis()
@@ -32,7 +32,7 @@ class IOUtils(private val context: Context)
         return "MP_IMG_${uniqueTimeMillis}.png"
     }
 
-    suspend fun getImagesDirectoryAsFile(): File
+    fun getImagesDirectoryAsFile(): File
     {
         return File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"MetaPortrait Saved Images")
     }
