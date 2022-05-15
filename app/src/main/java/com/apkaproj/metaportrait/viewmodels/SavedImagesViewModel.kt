@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.apkaproj.metaportrait.data.Image
 import com.apkaproj.metaportrait.helpers.Coroutines
 import com.apkaproj.metaportrait.repositories.SavedImagesRepository
 import java.io.File
@@ -36,7 +37,7 @@ class SavedImagesViewModel(private val savedImagesRepository: SavedImagesReposit
 
     private fun emitSavedImagesUiState (
         isLoading: Boolean = false,
-        savedImages: List<Pair<File, Bitmap>>? = null,
+        savedImages: List<Image>? = null,
         error: String? = null
     ) {
         val dataState = SavedImagesDataState(isLoading, savedImages, error)
@@ -46,7 +47,7 @@ class SavedImagesViewModel(private val savedImagesRepository: SavedImagesReposit
 
     data class SavedImagesDataState (
         val isLoading : Boolean,
-        val savedImages : List<Pair<File, Bitmap>>?,
+        val savedImages : List<Image>?,
         val error : String?
     )
 }

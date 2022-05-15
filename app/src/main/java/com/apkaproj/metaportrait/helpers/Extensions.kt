@@ -18,3 +18,13 @@ fun View.hide()
 {
     this.visibility = View.GONE
 }
+
+fun View.isVisible(): Boolean
+{
+    return this.visibility == View.VISIBLE
+}
+
+fun View.isGone(): Boolean
+{
+    return this.visibility == View.GONE
+}

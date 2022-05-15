@@ -1,9 +1,8 @@
 package com.apkaproj.metaportrait.repositories
 
-import android.graphics.Bitmap
-import java.io.File
+import com.apkaproj.metaportrait.data.Image
 
 interface SavedImagesRepository
 {
-    suspend fun loadSavedImages() : List<Pair<File, Bitmap>>?
+    suspend fun loadSavedImages() : List<Image>?
 }

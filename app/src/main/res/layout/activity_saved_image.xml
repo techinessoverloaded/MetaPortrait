@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context=".activities.SavedImageActivity">
+    tools:context=".activities.SavedImageActivity"
+    >
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:background="@color/primary"
-        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
         android:padding="10dp"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         >
 
@@ -24,9 +27,14 @@
             android:layout_height="26dp"
             android:src="@drawable/ic_back"
             app:tint="@color/white_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
+
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/savedImagesTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
@@ -36,8 +44,41 @@
             android:text="@string/saved_images"
             android:textSize="16sp"
             android:textColor="@color/white_color"
+            app:layout_constraintStart_toEndOf="@id/imageBack"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/noOfImgSelectedText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_color"
+            android:textSize="13sp"
+            android:fontFamily="@font/poppins_regular"
+            android:includeFontPadding="false"
+            android:layout_marginEnd="14dp"
+            tools:text="0 Items Selected"
+            app:layout_constraintEnd_toStartOf="@id/deleteImageButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/deleteImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete"
+            android:tint="@color/white_color"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/savedImagesRecyclerView"
@@ -45,9 +86,12 @@
         android:layout_height="0dp"
         android:padding="8dp"
         android:clipToPadding="false"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2"
+        android:layout_alignBottom="@id/layoutHeader"
+        android:orientation="vertical"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutHeader"
@@ -58,9 +102,11 @@
         android:id="@+id/savedImagesProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
