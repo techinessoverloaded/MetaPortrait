@@ -1,11 +1,15 @@
 package com.apkaproj.metaportrait.activities
 
+import android.R
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.apkaproj.metaportrait.adapters.ImageFiltersAdapter
 import com.apkaproj.metaportrait.data.ImageFilter
@@ -18,18 +22,21 @@ import com.apkaproj.metaportrait.viewmodels.EditImageViewModel
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+
 class EditImageActivity : AppCompatActivity(), ImageFilterListener
 {
 
     companion object {
         const val KEY_FILTERED_IMAGE_URI = "filteredImageUri"
     }
+    private var actualUri: Uri? = null
     private lateinit var binding : ActivityEditImageBinding
     private val viewModel : EditImageViewModel by viewModel()
     private lateinit var gpuImage : GPUImage
     // Image Bitmaps
     private lateinit var originalBitmap: Bitmap
     private val filteredBitmap = MutableLiveData<Bitmap>()
+    private lateinit var cropImageActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -39,6 +46,16 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         setListeners()
         setupObservers()
         prepareImagePreview()
+        cropImageActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            with(result)
+            {
+                if(resultCode == RESULT_OK)
+                {
+                    val croppedBitmap = data?.extras?.getParcelable<Bitmap>("data")
+                    binding.imagePreview.setImageBitmap(croppedBitmap)
+                }
+            }
+        }
     }
 
     private fun setupObservers()
@@ -111,6 +128,7 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         gpuImage = GPUImage(applicationContext)
         intent.getParcelableExtra<Uri>(MainActivity.KEY_IMAGE_URI)?.let { imageUri ->
             viewModel.prepareImagePreview(imageUri)
+            actualUri = imageUri
         }
     }
 
@@ -133,6 +151,31 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
 
         binding.imagePreview.setOnClickListener {
             binding.imagePreview.setImageBitmap(filteredBitmap.value)
+        }
+
+        binding.cropButton.setOnClickListener {
+            cropImage(actualUri!!)
+        }
+    }
+
+    private fun cropImage(uri: Uri)
+    {
+        try
+        {
+            val cropIntent = Intent("com.android.camera.action.CROP")
+            cropIntent.setDataAndType(uri,"image/*")
+            cropIntent.putExtra("crop","true")
+            cropIntent.putExtra("outputX",180)
+            cropIntent.putExtra("outputY",180)
+            cropIntent.putExtra("aspectX",3)
+            cropIntent.putExtra("aspectY",4)
+            cropIntent.putExtra("scaleUpIfNeeded",true)
+            cropIntent.putExtra("return-data",true)
+            cropImageActivityLauncher.launch(cropIntent)
+        }
+        catch(e: ActivityNotFoundException)
+        {
+            displayToast("Unable to Crop Image ! An error occurred !")
         }
     }
 
