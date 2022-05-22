@@ -1,6 +1,5 @@
 package com.apkaproj.metaportrait.activities
 
-import android.R
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
@@ -29,13 +28,13 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
     companion object {
         const val KEY_FILTERED_IMAGE_URI = "filteredImageUri"
     }
-    private var actualUri: Uri? = null
+    private var tempUri: Uri? = null
     private lateinit var binding : ActivityEditImageBinding
     private val viewModel : EditImageViewModel by viewModel()
     private lateinit var gpuImage : GPUImage
-    // Image Bitmaps
     private lateinit var originalBitmap: Bitmap
     private val filteredBitmap = MutableLiveData<Bitmap>()
+    private var isFromCamera: Boolean = false
     private lateinit var cropImageActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -53,6 +52,8 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
                 {
                     val croppedBitmap = data?.extras?.getParcelable<Bitmap>("data")
                     binding.imagePreview.setImageBitmap(croppedBitmap)
+                    originalBitmap = croppedBitmap ?: originalBitmap
+                    filteredBitmap.value = croppedBitmap ?: filteredBitmap.value
                 }
             }
         }
@@ -126,9 +127,10 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
     private fun prepareImagePreview()
     {
         gpuImage = GPUImage(applicationContext)
+        isFromCamera = intent.getBooleanExtra(MainActivity.IS_FROM_CAMERA, false)
         intent.getParcelableExtra<Uri>(MainActivity.KEY_IMAGE_URI)?.let { imageUri ->
             viewModel.prepareImagePreview(imageUri)
-            actualUri = imageUri
+            tempUri = imageUri
         }
     }
 
@@ -154,7 +156,7 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         }
 
         binding.cropButton.setOnClickListener {
-            cropImage(actualUri!!)
+            cropImage(tempUri!!)
         }
     }
 
@@ -171,6 +173,7 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
             cropIntent.putExtra("aspectY",4)
             cropIntent.putExtra("scaleUpIfNeeded",true)
             cropIntent.putExtra("return-data",true)
+            cropIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             cropImageActivityLauncher.launch(cropIntent)
         }
         catch(e: ActivityNotFoundException)

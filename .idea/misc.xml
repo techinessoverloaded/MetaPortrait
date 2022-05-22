@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/arunp/.gradle/caches/transforms-3/10989daa9005a19484b3796b5f8c328f/transformed/progress-dialog-1.4.4/res/drawable/bg_dialog.xml" value="0.1535" />
+        <entry key="..\:/Users/arunp/.gradle/caches/transforms-3/10989daa9005a19484b3796b5f8c328f/transformed/progress-dialog-1.4.4/res/drawable/bg_dialog_dark.xml" value="0.1535" />
+        <entry key="..\:/Users/arunp/.gradle/caches/transforms-3/10989daa9005a19484b3796b5f8c328f/transformed/progress-dialog-1.4.4/res/layout/layout_progressdialog.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/drawable/landing_background.xml" value="0.1175" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_edit_image.xml" value="0.2" />
         <entry key="..\:/Users/arunp/AndroidStudioProjects/MetaPortrait/app/src/main/res/layout/activity_forgot_password.xml" value="0.2" />
@@ -17,6 +20,7 @@
         <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/drawable/ic_done_nobg.xml" value="0.154" />
         <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/layout/activity_edit_image.xml" value="0.22" />
         <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/layout/activity_filtered_image.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/layout/activity_main.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/layout/activity_saved_image.xml" value="0.22" />
         <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/layout/item_container_filter.xml" value="0.17552083333333332" />
         <entry key="..\:/Users/arunp/StudioProjects/MetaPortrait/app/src/main/res/layout/item_container_saved_image.xml" value="0.22" />

@@ -29,9 +29,8 @@ import java.io.File
 class MainActivity : AppCompatActivity()
 {
     companion object {
-        private const val REQUEST_CODE_PICK_IMAGE = 1
-        private const val REQUEST_CODE = "REQUEST_CODE"
         const val KEY_IMAGE_URI = "imageUri"
+        const val IS_FROM_CAMERA = "isFromCamera"
     }
 
     private lateinit var binding : ActivityMainBinding
@@ -42,6 +41,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var userName : String
     private lateinit var userObject : User
     private lateinit var takePictureAndSaveToUri : ActivityResultLauncher<Uri>
+    private lateinit var getContentUriFromActivity : ActivityResultLauncher<String>
     private lateinit var uriForOpenCamera : Uri
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -58,12 +58,24 @@ class MainActivity : AppCompatActivity()
             {
                 Intent(this@MainActivity, EditImageActivity::class.java).also { editImageIntent ->
                     editImageIntent.putExtra(KEY_IMAGE_URI, uriForOpenCamera)
+                    editImageIntent.putExtra(IS_FROM_CAMERA, true)
                     startActivity(editImageIntent)
                 }
             }
             else
             {
                 displayToast("Taking Picture through Camera Cancelled !")
+            }
+        }
+        getContentUriFromActivity = registerForActivityResult(ActivityResultContracts.GetContent())
+        {
+            imageUri : Uri? ->
+            imageUri?.let {
+                Intent(this@MainActivity, EditImageActivity::class.java).also { editImageIntent ->
+                editImageIntent.putExtra(KEY_IMAGE_URI, imageUri)
+                editImageIntent.putExtra(IS_FROM_CAMERA, false)
+                startActivity(editImageIntent)
+                }
             }
         }
         setListeners()
@@ -104,27 +116,8 @@ class MainActivity : AppCompatActivity()
 
     private fun setListeners()
     {
-        val getContentUriFromActivity = registerForActivityResult(ActivityResultContracts.GetContent())
-        {
-            imageUri : Uri? ->
-            imageUri?.let {
-                Intent(this@MainActivity, EditImageActivity::class.java).also { editImageIntent ->
-                    editImageIntent.putExtra(KEY_IMAGE_URI, imageUri)
-                    startActivity(editImageIntent)
-                }
-            }
-        }
-
         binding.buttonEditNewImage.setOnClickListener {
-            Intent (
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            ).also { pickerIntent ->
-                pickerIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                pickerIntent.putExtra(REQUEST_CODE, REQUEST_CODE_PICK_IMAGE);
-                //startActivityForResult.launch(pickerIntent)
-                getContentUriFromActivity.launch("image/*")
-            }
+            getContentUriFromActivity.launch("image/*")
         }
 
         binding.buttonViewSavedImages.setOnClickListener {
@@ -134,7 +127,6 @@ class MainActivity : AppCompatActivity()
         }
 
         binding.buttonOpenCamera.setOnClickListener {
-
                 val ioUtils = IOUtils(this)
                 val mediaStorageDirectory = ioUtils.getImagesDirectoryAsFile()
                 val fileName = ioUtils.getUniqueFileName()
