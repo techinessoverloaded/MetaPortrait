@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity()
                 Intent(this@MainActivity, EditImageActivity::class.java).also { editImageIntent ->
                     editImageIntent.putExtra(KEY_IMAGE_URI, uriForOpenCamera)
                     editImageIntent.putExtra(IS_FROM_CAMERA, true)
+                    editImageIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    editImageIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     startActivity(editImageIntent)
                 }
             }

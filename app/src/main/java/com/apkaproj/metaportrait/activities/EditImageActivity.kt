@@ -20,6 +20,7 @@ import com.apkaproj.metaportrait.listeners.ImageFilterListener
 import com.apkaproj.metaportrait.viewmodels.EditImageViewModel
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 
 class EditImageActivity : AppCompatActivity(), ImageFilterListener
@@ -142,6 +143,25 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
 
         binding.imageSave.setOnClickListener {
             filteredBitmap.value?.let { bitmap ->
+                if (isFromCamera)
+                {
+                    tempUri?.path?.let {
+                        var path = it
+                        path = path.substring(path.indexOf("/external_files/")+1)
+                        displayToast(path)
+                        Thread.sleep(5000)
+                        File(path).delete().also { successful ->
+                            if (successful)
+                            {
+                                displayToast("Original File deleted")
+                            }
+                            else
+                            {
+                                displayToast("Unable to delete file")
+                            }
+                        }
+                    }
+                }
                 viewModel.saveFilteredImageBitmap(bitmap)
             }
         }
