@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.apkaproj.metaportrait.R
-import com.apkaproj.metaportrait.data.ImageFilter
+import com.apkaproj.metaportrait.models.ImageFilter
 import com.apkaproj.metaportrait.databinding.ItemContainerFilterBinding
 import com.apkaproj.metaportrait.listeners.ImageFilterListener
 

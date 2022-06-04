@@ -1,14 +1,12 @@
 package com.apkaproj.metaportrait.activities
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.adapters.SavedImagesAdapter
-import com.apkaproj.metaportrait.data.Image
 import com.apkaproj.metaportrait.databinding.ActivitySavedImageBinding
 import com.apkaproj.metaportrait.helpers.displayToast
 import com.apkaproj.metaportrait.helpers.hide

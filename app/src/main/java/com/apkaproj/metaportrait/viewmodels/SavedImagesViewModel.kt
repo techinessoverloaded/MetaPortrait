@@ -1,13 +1,11 @@
 package com.apkaproj.metaportrait.viewmodels
 
-import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.apkaproj.metaportrait.data.Image
+import com.apkaproj.metaportrait.models.Image
 import com.apkaproj.metaportrait.helpers.Coroutines
 import com.apkaproj.metaportrait.repositories.SavedImagesRepository
-import java.io.File
 
 class SavedImagesViewModel(private val savedImagesRepository: SavedImagesRepository) : ViewModel()
 {

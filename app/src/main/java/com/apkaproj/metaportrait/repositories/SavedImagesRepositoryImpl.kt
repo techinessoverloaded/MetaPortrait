@@ -3,7 +3,7 @@ package com.apkaproj.metaportrait.repositories
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.apkaproj.metaportrait.data.Image
+import com.apkaproj.metaportrait.models.Image
 import com.apkaproj.metaportrait.helpers.IOUtils
 import java.io.File
 

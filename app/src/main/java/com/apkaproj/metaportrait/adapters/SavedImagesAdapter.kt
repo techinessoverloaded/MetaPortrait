@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.apkaproj.metaportrait.data.Image
+import com.apkaproj.metaportrait.models.Image
 import com.apkaproj.metaportrait.databinding.ItemContainerSavedImageBinding
 import com.apkaproj.metaportrait.R
 import com.apkaproj.metaportrait.listeners.ImageSelectionListener

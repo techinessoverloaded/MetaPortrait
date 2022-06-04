@@ -1,6 +1,6 @@
 package com.apkaproj.metaportrait.listeners
 
-import com.apkaproj.metaportrait.data.ImageFilter
+import com.apkaproj.metaportrait.models.ImageFilter
 
 interface ImageFilterListener
 {

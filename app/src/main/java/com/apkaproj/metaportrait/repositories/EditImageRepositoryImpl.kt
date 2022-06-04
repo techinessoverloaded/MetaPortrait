@@ -4,9 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Environment
 import androidx.core.content.FileProvider
-import com.apkaproj.metaportrait.data.ImageFilter
+import com.apkaproj.metaportrait.models.ImageFilter
 import com.apkaproj.metaportrait.helpers.IOUtils
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.*

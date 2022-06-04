@@ -1,6 +1,6 @@
 package com.apkaproj.metaportrait.repositories
 
-import com.apkaproj.metaportrait.data.Image
+import com.apkaproj.metaportrait.models.Image
 
 interface SavedImagesRepository
 {

@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.apkaproj.metaportrait.data.ImageFilter
+import com.apkaproj.metaportrait.models.ImageFilter
 import com.apkaproj.metaportrait.helpers.Coroutines
 import com.apkaproj.metaportrait.repositories.EditImageRepository
 

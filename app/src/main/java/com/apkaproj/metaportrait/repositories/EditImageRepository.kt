@@ -2,7 +2,7 @@ package com.apkaproj.metaportrait.repositories
 
 import android.graphics.Bitmap
 import android.net.Uri
-import com.apkaproj.metaportrait.data.ImageFilter
+import com.apkaproj.metaportrait.models.ImageFilter
 
 interface EditImageRepository
 {

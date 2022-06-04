@@ -1,4 +1,4 @@
-package com.apkaproj.metaportrait.data
+package com.apkaproj.metaportrait.models
 
 import android.graphics.Bitmap
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter

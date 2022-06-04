@@ -7,4 +7,5 @@
     <string name="welcome_to_metaportrait">Welcome to MetaPortrait,</string>
     <string name="apply_filter">Apply Filter</string>
     <string name="type_new_name_without_extension">Type New Name without Extension</string>
+    <string name="clear_text_highlights">Clear Text Highlights</string>
 </resources>

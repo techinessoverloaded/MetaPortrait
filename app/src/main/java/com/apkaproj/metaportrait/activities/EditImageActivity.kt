@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.apkaproj.metaportrait.adapters.ImageFiltersAdapter
-import com.apkaproj.metaportrait.data.ImageFilter
+import com.apkaproj.metaportrait.models.ImageFilter
 import com.apkaproj.metaportrait.databinding.ActivityEditImageBinding
 import com.apkaproj.metaportrait.helpers.displayToast
 import com.apkaproj.metaportrait.helpers.hide
@@ -149,7 +149,6 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
                         var path = it
                         path = path.substring(path.indexOf("/external_files/")+1)
                         displayToast(path)
-                        Thread.sleep(5000)
                         File(path).delete().also { successful ->
                             if (successful)
                             {

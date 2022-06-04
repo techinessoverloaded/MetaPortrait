@@ -2,4 +2,5 @@
 <resources>
     <string name="saved_images">Saved Images</string>
     <string name="type_new_name_without_extension">Type New Name without Extension</string>
+    <string name="clear_text_highlights">Clear Text Highlights</string>
 </resources>
