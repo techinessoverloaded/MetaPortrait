@@ -11,6 +11,7 @@
     <color name="buttonSavedImages">#2AC531</color>
     <color name="buttonEditNewImage">#FA9C11</color>
     <color name="buttonOpenCamera">#0091EA</color>
+    <color name="buttonLogout">#E31506</color>
     <color name="black_color">#FF000000</color>
     <color name="white_color">#FFFFFFFF</color>
     <color name="img_selected_color">#06590A</color>

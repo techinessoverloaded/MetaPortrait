@@ -7,8 +7,13 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.models.ImageFilter
 import com.apkaproj.metaportrait.helpers.IOUtils
+import com.apkaproj.metaportrait.helpers.displayToast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -455,6 +460,23 @@ class EditImageRepositoryImpl(private val context : Context) : EditImageReposito
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
             flush()
             close()
+        }
+        val mAuth = FirebaseAuth.getInstance()
+        val userId = mAuth.currentUser!!.uid
+        val storageRef = Firebase.storage.reference
+        val imagesRef = storageRef.child("images")
+        val userImagesRef = imagesRef.child("${userId}/${file.name}")
+        with(ByteArrayOutputStream())
+        {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
+            val data = toByteArray()
+            val uploadTask = userImagesRef.putBytes(data)
+            uploadTask.addOnSuccessListener {
+                context.displayToast("Image backed up to Cloud successfully !")
+            }.addOnFailureListener { exception ->
+                exception.printStackTrace()
+                context.displayToast("Unable to back up Image to Cloud ! Make sure that the internet is turned on !")
+            }
         }
     }
 }

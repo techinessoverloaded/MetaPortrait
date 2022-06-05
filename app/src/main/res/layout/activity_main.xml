@@ -108,4 +108,20 @@
         app:layout_constraintBottom_toTopOf="@id/textSubtitle"
         />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logoutBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cornerRadius="24dp"
+        android:text="@string/logout"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="25dp"
+        android:backgroundTint="@color/buttonLogout"
+        app:icon="@drawable/ic_logout"
+        app:iconGravity="textStart"
+        android:fontFamily="@font/poppins_semi_bold"
+        android:includeFontPadding="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

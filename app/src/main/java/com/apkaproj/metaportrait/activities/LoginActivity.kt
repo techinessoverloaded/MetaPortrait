@@ -63,7 +63,11 @@ class LoginActivity : AppCompatActivity()
                 if(it.isSuccessful)
                 {
                     progressDialog.dismiss()
-                    PreferenceUtils.getInstance(this).needsDbUpdate = true
+                    with(PreferenceUtils.getInstance(this))
+                    {
+                        needsDbUpdate = true
+                        isFirstTime = false
+                    }
                     Toast.makeText(this,"Logged in successfully !",Toast.LENGTH_LONG).show()
                     startActivity(Intent(this@LoginActivity,MainActivity::class.java))
                     finish()

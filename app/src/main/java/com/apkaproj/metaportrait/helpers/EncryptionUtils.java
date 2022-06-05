@@ -1,5 +1,6 @@
 package com.apkaproj.metaportrait.helpers;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,17 +8,21 @@ import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 
 public class EncryptionUtils
 {
     private static SecretKeySpec secretKey;
-    private static  byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private static byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     private static IvParameterSpec ivspec = new IvParameterSpec(iv);
     private static byte[] key;
+
     private static void setKey(String myKey)
     {
-        MessageDigest sha = null;
+        MessageDigest sha;
         try {
             key = myKey.getBytes(StandardCharsets.UTF_8);
             sha = MessageDigest.getInstance("SHA-1");
@@ -62,5 +67,18 @@ public class EncryptionUtils
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String getByteArrayFromBitmap(Bitmap bitmap)
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        return Base64.encodeToString(bos.toByteArray(), Base64.DEFAULT);
+    }
+
+    public static Bitmap getBitmapFromByteString(String byteString)
+    {
+        byte[] imageBytes = Base64.decode(byteString, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 }

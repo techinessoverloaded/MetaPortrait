@@ -9,4 +9,5 @@
     <string name="type_new_name_without_extension">Type New Name without Extension</string>
     <string name="clear_text_highlights">Clear Text Highlights</string>
     <string name="clear_highlighted_faces">Clear Highlighted Faces</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -1,13 +1,11 @@
 package com.apkaproj.metaportrait.activities
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.apkaproj.metaportrait.adapters.ImageFiltersAdapter
@@ -20,7 +18,6 @@ import com.apkaproj.metaportrait.listeners.ImageFilterListener
 import com.apkaproj.metaportrait.viewmodels.EditImageViewModel
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,7 +26,6 @@ import java.io.File
 
 class EditImageActivity : AppCompatActivity(), ImageFilterListener
 {
-
     companion object {
         const val KEY_FILTERED_IMAGE_URI = "filteredImageUri"
     }
