@@ -18,6 +18,10 @@ import com.apkaproj.metaportrait.helpers.hide
 import com.apkaproj.metaportrait.helpers.show
 import com.apkaproj.metaportrait.listeners.ImageFilterListener
 import com.apkaproj.metaportrait.viewmodels.EditImageViewModel
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.options
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -36,7 +40,7 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
     private lateinit var originalBitmap: Bitmap
     private val filteredBitmap = MutableLiveData<Bitmap>()
     private var isFromCamera: Boolean = false
-    private lateinit var cropImageActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var cropImageActivityLauncher: ActivityResultLauncher<CropImageContractOptions>
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -46,15 +50,25 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         setListeners()
         setupObservers()
         prepareImagePreview()
-        cropImageActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            with(result)
+        cropImageActivityLauncher = registerForActivityResult(CropImageContract()) { result ->
+            if (result.isSuccessful)
             {
-                if(resultCode == RESULT_OK)
+                if(result.uriContent == null)
                 {
-                    val croppedBitmap = data?.extras?.getParcelable<Bitmap>("data")
-                    binding.imagePreview.setImageBitmap(croppedBitmap)
-                    originalBitmap = croppedBitmap ?: originalBitmap
-                    filteredBitmap.value = croppedBitmap ?: filteredBitmap.value
+                    displayToast("Error in retrieving cropped Image !")
+                }
+                else
+                {
+                    prepareCroppedImagePreview(result.uriContent!!)
+                }
+            }
+            else
+            {
+                val exception = result.error
+                if(exception != null)
+                {
+                    exception.printStackTrace()
+                    displayToast("Error occurred while cropping Image !")
                 }
             }
         }
@@ -70,7 +84,6 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
                 // for the first time 'filtered image = original'
                 originalBitmap = bitmap
                 filteredBitmap.value = bitmap
-
                 with(originalBitmap) {
                     gpuImage.setImage(this)
                     binding.imagePreview.show()
@@ -135,6 +148,12 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         }
     }
 
+    private fun prepareCroppedImagePreview(uri: Uri)
+    {
+        viewModel.prepareImagePreview(uri)
+        tempUri = uri
+    }
+
     private fun setListeners()
     {
         binding.imageBack.setOnClickListener {
@@ -175,29 +194,15 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
         }
 
         binding.cropButton.setOnClickListener {
-            cropImage(tempUri!!)
-        }
-    }
-
-    private fun cropImage(uri: Uri)
-    {
-        try
-        {
-            val cropIntent = Intent("com.android.camera.action.CROP")
-            cropIntent.setDataAndType(uri,"image/*")
-            cropIntent.putExtra("crop","true")
-            cropIntent.putExtra("outputX",180)
-            cropIntent.putExtra("outputY",180)
-            cropIntent.putExtra("aspectX",3)
-            cropIntent.putExtra("aspectY",4)
-            cropIntent.putExtra("scaleUpIfNeeded",true)
-            cropIntent.putExtra("return-data",true)
-            cropIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            cropImageActivityLauncher.launch(cropIntent)
-        }
-        catch(e: ActivityNotFoundException)
-        {
-            displayToast("Unable to Crop Image ! An error occurred !")
+            cropImageActivityLauncher.launch(
+                options(uri = tempUri) {
+                    setOutputCompressFormat(Bitmap.CompressFormat.PNG)
+                    setActivityTitle("Crop Image")
+                    setAllowFlipping(true)
+                    setAllowRotation(true)
+                    setAllowCounterRotation(true)
+                }
+            )
         }
     }
 

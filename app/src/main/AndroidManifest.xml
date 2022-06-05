@@ -3,6 +3,8 @@
     package="com.apkaproj.metaportrait">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
         android:name=".helpers.AppConfig"
@@ -44,7 +46,8 @@
         <activity
             android:name=".activities.SignUpActivity"
             android:exported="false" />
-
+        <activity android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

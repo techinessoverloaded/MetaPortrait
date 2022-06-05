@@ -19,10 +19,18 @@ import com.apkaproj.metaportrait.helpers.displayToast
 import com.apkaproj.metaportrait.helpers.hide
 import com.apkaproj.metaportrait.helpers.show
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
+import com.apkaproj.metaportrait.R
+import com.google.mlkit.vision.label.ImageLabel
+import com.google.mlkit.vision.label.ImageLabeler
+import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 
 class FilteredImageActivity : AppCompatActivity()
 {
@@ -88,24 +96,25 @@ class FilteredImageActivity : AppCompatActivity()
         }
     }
 
-    private fun recognizeText(image: Bitmap?)
+    private fun recognizeText(image: Bitmap)
     {
-        if (image == null)
-        {
-            displayToast("There was some error in recognizing text!")
-            return
-        }
-//        binding.imageFilteredImage.setImageBitmap(null)
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-        val visionImage: InputImage = InputImage.fromBitmap(image, 0)
+        val visionImage = InputImage.fromBitmap(image, 0)
         recognizer.process(visionImage).addOnSuccessListener { result ->
-            binding.imageProcessingProgressBar.hide()
-            val mutableImage = image.copy(Bitmap.Config.ARGB_8888, true)
-            highlightText(result, mutableImage)
+            if(result.text.isEmpty())
+            {
+                binding.imageProcessingProgressBar.hide()
+                displayToast("No text was detected in the image !")
+            }
+            else
+            {
+                val mutableImage = image.copy(Bitmap.Config.ARGB_8888, true)
+                highlightText(result, mutableImage)
+            }
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
             binding.imageProcessingProgressBar.hide()
-            displayToast("An error occurred !")
+            displayToast("An error occurred while recognizing text !")
         }
     }
 
@@ -113,6 +122,7 @@ class FilteredImageActivity : AppCompatActivity()
     {
         if (result == null || image == null)
         {
+            displayToast("Error occurred while highlighting text !")
             return
         }
         val binding3 = LayoutOcrResultBinding.inflate(layoutInflater)
@@ -141,7 +151,9 @@ class FilteredImageActivity : AppCompatActivity()
             binding3.ocrResultTextView.text = binding3.ocrResultTextView.text.toString() + "${pair.key} - ${pair.value}"
         }
         binding.imageFilteredImage.setImageBitmap(image)
+        binding.clearLabelHighlightBtn.setText(R.string.clear_text_highlights)
         binding.clearLabelHighlightBtn.show()
+        binding.imageProcessingProgressBar.hide()
         AlertDialog.Builder(this)
             .setTitle("Text Recognition Result")
             .setView(binding3.root)
@@ -160,9 +172,126 @@ class FilteredImageActivity : AppCompatActivity()
             .show()
     }
 
+    private fun callFaceRecognizer(image: Bitmap)
+    {
+        val options = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+            .enableTracking()
+            .build()
+        val faceDetector = FaceDetection.getClient(options)
+        val inputImage = InputImage.fromBitmap(image, 0)
+        faceDetector.process(inputImage).addOnSuccessListener { faces ->
+            if(faces.isEmpty())
+            {
+                binding.imageProcessingProgressBar.hide()
+                displayToast("No faces were detected in the image !")
+            }
+            else
+            {
+                val mutableImage = image.copy(Bitmap.Config.ARGB_8888, true)
+                detectFaces(faces, mutableImage)
+            }
+        }.addOnFailureListener { exception ->
+            exception.printStackTrace()
+            binding.imageProcessingProgressBar.hide()
+            displayToast("An error occurred while detecting faces !")
+        }
+    }
+
+    private fun detectFaces(faces: List<Face>?, image: Bitmap?)
+    {
+        if(faces == null || image == null)
+        {
+            displayToast("Error occurred while detecting faces !")
+            return
+        }
+        val canvas = Canvas(image)
+        val facePaint = Paint()
+        facePaint.color = Color.RED
+        facePaint.style = Paint.Style.STROKE
+        facePaint.strokeWidth = 8F
+        val faceTextPaint = Paint()
+        faceTextPaint.color = Color.RED
+        faceTextPaint.textSize = 40F
+        faceTextPaint.typeface = Typeface.DEFAULT_BOLD
+        for ((index, face) in faces.withIndex())
+        {
+            canvas.drawRect(face.boundingBox, facePaint)
+            canvas.drawText("Face${index + 1}", (face.boundingBox.centerX() - face.boundingBox.width() / 2) + 8F, (face.boundingBox.centerY() + face.boundingBox.height() / 2) - 8F, faceTextPaint)
+        }
+        binding.imageFilteredImage.setImageBitmap(image)
+        binding.clearLabelHighlightBtn.setText(R.string.clear_highlighted_faces)
+        binding.clearLabelHighlightBtn.show()
+        binding.imageProcessingProgressBar.hide()
+    }
+
+    private fun callImageLabelDetector(image: Bitmap)
+    {
+        val imageLabeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+        val inputImage = InputImage.fromBitmap(image, 0)
+        imageLabeler.process(inputImage).addOnSuccessListener { labels ->
+            if(labels.isEmpty())
+            {
+                binding.imageProcessingProgressBar.hide()
+                displayToast("Couldn't label anything in Image !")
+            }
+            else
+            {
+                labelImage(labels)
+            }
+        }.addOnFailureListener { exception ->
+            exception.printStackTrace()
+            binding.imageProcessingProgressBar.hide()
+            displayToast("An error occurred while labeling image !")
+        }
+    }
+
+    private fun labelImage(labels: List<ImageLabel>?)
+    {
+        if(labels == null)
+        {
+            displayToast("Error occurred while labeling image !")
+            return
+        }
+        var resultString = ""
+        var index = 1
+        for(label in labels)
+        {
+            resultString += "${index++} - ${label.text}\n"
+        }
+        val binding3 = LayoutOcrResultBinding.inflate(layoutInflater)
+        binding3.ocrResultTextView.text = resultString
+        binding.imageProcessingProgressBar.hide()
+        AlertDialog.Builder(this)
+            .setTitle("Image Labeling Result")
+            .setView(binding3.root)
+            .setNegativeButton("Close") { dialog , _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .create()
+            .show()
+    }
+
+    private fun clearImageHighlights()
+    {
+        binding.imageFilteredImage.setImageURI(fileUri)
+    }
+
+    private fun getBitmapFromUri(): Bitmap?
+    {
+        val parcelFileDescriptor = contentResolver.openFileDescriptor(fileUri, "r")
+        val fileDescriptor = parcelFileDescriptor?.fileDescriptor
+        val bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor?.close()
+        return bitmap
+    }
+
     private fun setListeners()
     {
         binding.fabShare.setOnClickListener {
+            clearImageHighlights()
             with(Intent(Intent.ACTION_SEND)) {
                 putExtra(Intent.EXTRA_STREAM, fileUri)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -173,23 +302,45 @@ class FilteredImageActivity : AppCompatActivity()
 
         binding.fabOCR.setOnClickListener {
             binding.imageProcessingProgressBar.show()
-            val parcelFileDescriptor = contentResolver.openFileDescriptor(fileUri, "r")
-            val fileDescriptor = parcelFileDescriptor?.fileDescriptor
-            val bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor)
-            parcelFileDescriptor?.close()
-            recognizeText(bitmap)
+            val bitmap = getBitmapFromUri()
+            if(bitmap == null)
+            {
+                displayToast("Error in detecting text !")
+            }
+            else
+            {
+                recognizeText(bitmap)
+            }
         }
 
         binding.fabFacialDetection.setOnClickListener {
-
+            binding.imageProcessingProgressBar.show()
+            val bitmap = getBitmapFromUri()
+            if(bitmap == null)
+            {
+                displayToast("Error in detecting faces !")
+            }
+            else
+            {
+                callFaceRecognizer(bitmap)
+            }
         }
 
         binding.fabImageLabel.setOnClickListener {
-
+            binding.imageProcessingProgressBar.show()
+            val bitmap = getBitmapFromUri()
+            if(bitmap == null)
+            {
+                displayToast("Error in labeling image !")
+            }
+            else
+            {
+                callImageLabelDetector(bitmap)
+            }
         }
 
         binding.clearLabelHighlightBtn.setOnClickListener { button ->
-            binding.imageFilteredImage.setImageURI(fileUri)
+            clearImageHighlights()
             button.hide()
         }
 

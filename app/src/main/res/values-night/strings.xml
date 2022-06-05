@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">MetaPortrait</string>
     <string name="saved_images">Saved Images</string>
+    <string name="edit_new_image">Edit New Image</string>
+    <string name="open_camera">Open Camera</string>
+    <string name="let_s_edit_some_images">Let\'s edit some images !</string>
+    <string name="welcome_to_metaportrait">Welcome to MetaPortrait,</string>
+    <string name="apply_filter">Apply Filter</string>
     <string name="type_new_name_without_extension">Type New Name without Extension</string>
     <string name="clear_text_highlights">Clear Text Highlights</string>
+    <string name="clear_highlighted_faces">Clear Highlighted Faces</string>
 </resources>
