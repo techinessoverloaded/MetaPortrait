@@ -6,7 +6,7 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondary</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/primaryDark</item>
+        <item name="android:statusBarColor">@color/primaryDark</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="FullScreen" parent="Theme.MetaPortrait">
