@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.apkaproj.metaportrait.models.Image
 import com.apkaproj.metaportrait.helpers.Coroutines
 import com.apkaproj.metaportrait.repositories.SavedImagesRepository
+import com.google.firebase.storage.StorageReference
 
 class SavedImagesViewModel(private val savedImagesRepository: SavedImagesRepository) : ViewModel()
 {
@@ -31,6 +32,19 @@ class SavedImagesViewModel(private val savedImagesRepository: SavedImagesReposit
                 emitSavedImagesUiState(error = it.message.toString())
             }
         }
+    }
+
+    fun syncSavedImages(userFolderReference: StorageReference) : Boolean
+    {
+        var result: Boolean = false
+        Coroutines.io {
+            runCatching {
+                savedImagesRepository.syncSavedImages(userFolderReference)
+            }.onSuccess {
+                result = it
+            }
+        }
+        return result
     }
 
     private fun emitSavedImagesUiState (

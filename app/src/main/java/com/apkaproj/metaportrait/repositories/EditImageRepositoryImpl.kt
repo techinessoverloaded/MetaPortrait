@@ -5,10 +5,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.apkaproj.metaportrait.helpers.EncryptionUtils
 import com.apkaproj.metaportrait.models.ImageFilter
 import com.apkaproj.metaportrait.helpers.IOUtils
 import com.apkaproj.metaportrait.helpers.displayToast
+import com.apkaproj.metaportrait.models.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import jp.co.cyberagent.android.gpuimage.GPUImage
@@ -466,17 +470,39 @@ class EditImageRepositoryImpl(private val context : Context) : EditImageReposito
         val storageRef = Firebase.storage.reference
         val imagesRef = storageRef.child("images")
         val userImagesRef = imagesRef.child("${userId}/${file.name}")
-        with(ByteArrayOutputStream())
-        {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
-            val data = toByteArray()
-            val uploadTask = userImagesRef.putBytes(data)
-            uploadTask.addOnSuccessListener {
-                context.displayToast("Image backed up to Cloud successfully !")
+        val firestore = Firebase.firestore
+        var userObject: User?
+        var keyForEncryption: String?
+
+        firestore.collection("Users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                userObject = snapshot.toObject(User::class.java)
+                keyForEncryption = userObject?.tempKey
+                if(userObject == null || keyForEncryption == null)
+                {
+                    context.displayToast("Error in backing up images to the Cloud !")
+                    return@addOnSuccessListener
+                }
+                val byteArray = EncryptionUtils.getEncryptedImageAsByteArray(bitmap, keyForEncryption!!)
+                if(byteArray == null)
+                {
+                    context.displayToast("Error in backing up images to the Cloud !")
+                    return@addOnSuccessListener
+                }
+                val uploadTask = userImagesRef.putBytes(byteArray)
+                uploadTask.addOnSuccessListener {
+                    context.displayToast("Image backed up to Cloud successfully !")
+                }.addOnFailureListener { exception ->
+                    exception.printStackTrace()
+                    context.displayToast("Unable to back up Image to Cloud ! Make sure that the internet is turned on !")
+                    return@addOnFailureListener
+                }
             }.addOnFailureListener { exception ->
                 exception.printStackTrace()
-                context.displayToast("Unable to back up Image to Cloud ! Make sure that the internet is turned on !")
+                context.displayToast("Error in backing up images to the Cloud !")
+                return@addOnFailureListener
             }
-        }
     }
 }

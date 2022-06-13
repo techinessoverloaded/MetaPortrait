@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.apkaproj.metaportrait.models.Image
 import com.apkaproj.metaportrait.helpers.IOUtils
+import com.google.firebase.storage.StorageReference
 import java.io.File
 
 class SavedImagesRepositoryImpl(private val context : Context) : SavedImagesRepository
@@ -20,6 +21,11 @@ class SavedImagesRepositoryImpl(private val context : Context) : SavedImagesRepo
             }
             return savedImages
         } ?: return null
+    }
+
+    override suspend fun syncSavedImages(userFolderReference: StorageReference) : Boolean
+    {
+
     }
 
     private fun getPreviewBitmap(file : File) : Bitmap

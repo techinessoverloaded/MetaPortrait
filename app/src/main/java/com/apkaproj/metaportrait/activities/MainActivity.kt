@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity()
                     val userId = mAuth.currentUser!!.uid
                     val storageRef = Firebase.storage.reference
                     val imagesRef = storageRef.child("images")
-                    var fileName: String = ""
+                    var fileName = ""
                     contentResolver.query(uriForOpenCamera,null,
                         null,null)?.use { cursor ->
                         val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -72,19 +73,39 @@ class MainActivity : AppCompatActivity()
                         fileName = cursor.getString(nameIndex)
                     }
                     val userImagesRef = imagesRef.child("${userId}/${fileName}")
+                    val firestore = Firebase.firestore
+                    var userObject: User?
+                    var keyForEncryption: String?
                     val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uriForOpenCamera))
-                    with(ByteArrayOutputStream())
-                    {
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
-                        val data = toByteArray()
-                        val uploadTask = userImagesRef.putBytes(data)
-                        uploadTask.addOnSuccessListener {
-                            displayToast("Image backed up to Cloud successfully !")
+                    firestore.collection("Users")
+                        .document(userId)
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            userObject = snapshot.toObject(User::class.java)
+                            keyForEncryption = userObject?.tempKey
+                            if(userObject == null || keyForEncryption == null)
+                            {
+                                displayToast("Error in backing up images to the Cloud !")
+                            }
+                            val byteArray = EncryptionUtils.getEncryptedImageAsByteArray(bitmap, keyForEncryption!!)
+                            if(byteArray == null)
+                            {
+                                displayToast("Error in backing up images to the Cloud !")
+                                return@addOnSuccessListener
+                            }
+                            val uploadTask = userImagesRef.putBytes(byteArray)
+                            uploadTask.addOnSuccessListener {
+                                displayToast("Image backed up to Cloud successfully !")
+                            }.addOnFailureListener { exception ->
+                                exception.printStackTrace()
+                                displayToast("Unable to back up Image to Cloud ! Make sure that the internet is turned on !")
+                                return@addOnFailureListener
+                            }
                         }.addOnFailureListener { exception ->
                             exception.printStackTrace()
-                            displayToast("Unable to back up Image to Cloud ! Make sure that the internet is turned on !")
+                            displayToast("Error in backing up images to the Cloud !")
+                            return@addOnFailureListener
                         }
-                    }
                     startActivity(editImageIntent)
                 }
             }
@@ -115,7 +136,7 @@ class MainActivity : AppCompatActivity()
                 if (it.isSuccessful)
                 {
                     userObject = it.result!!.toObject(User::class.java)!!
-                    userName = EncryptionUtils.decrypt(userObject.name, userObject.tempKey)
+                    userName = EncryptionUtils.decrypt(userObject.name, userObject.tempKey).toString()
                     binding.textTitle.text = "Welcome to MetaPortrait, $userName !"
                 }
                 else
@@ -129,18 +150,27 @@ class MainActivity : AppCompatActivity()
     {
         super.onResume()
         val preferenceUtils = PreferenceUtils.getInstance(this)
+        val storageRef = Firebase.storage.reference
+        val imagesRef = storageRef.child("images")
+        val userImagesRef = imagesRef.child(userId)
         if(preferenceUtils.needsDbUpdate)
         {
             getData(Source.SERVER)
-            preferenceUtils.needsDbUpdate = false
         }
         else
         {
             getData(Source.CACHE)
         }
+        userImagesRef.listAll().addOnSuccessListener { result ->
+            if(result.items.isEmpty())
+            {
+                preferenceUtils.needsDbUpdate = false
+            }
+        }
     }
 
-    private fun setListeners() {
+    private fun setListeners()
+    {
         binding.buttonEditNewImage.setOnClickListener {
             getContentUriFromActivity.launch("image/*")
         }

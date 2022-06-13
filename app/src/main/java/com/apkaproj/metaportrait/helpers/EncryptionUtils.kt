@@ -1,84 +1,111 @@
-package com.apkaproj.metaportrait.helpers;
+package com.apkaproj.metaportrait.helpers
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import java.io.ByteArrayOutputStream
+import java.lang.Exception
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
-
-public class EncryptionUtils
+object EncryptionUtils
 {
-    private static SecretKeySpec secretKey;
-    private static byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    private static IvParameterSpec ivspec = new IvParameterSpec(iv);
-    private static byte[] key;
+    private var secretKey: SecretKeySpec? = null
+    private val iv = byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    private val ivSpec = IvParameterSpec(iv)
+    private lateinit var key: ByteArray
 
-    private static void setKey(String myKey)
+    private fun setKey(myKey: String)
     {
-        MessageDigest sha;
-        try {
-            key = myKey.getBytes(StandardCharsets.UTF_8);
-            sha = MessageDigest.getInstance("SHA-1");
-            key = sha.digest(key);
-            key = Arrays.copyOf(key, 16);
-            secretKey = new SecretKeySpec(key, "AES");
-        }
-        catch (NoSuchAlgorithmException e)
+        val sha: MessageDigest
+        try
         {
-            e.printStackTrace();
+            key = myKey.toByteArray(StandardCharsets.UTF_8)
+            sha = MessageDigest.getInstance("SHA-1")
+            key = sha.digest(key)
+            key = key.copyOf(16)
+            secretKey = SecretKeySpec(key, "AES")
+        }
+        catch (e: NoSuchAlgorithmException)
+        {
+            e.printStackTrace()
         }
     }
 
-    public static String encrypt(String strToEncrypt,String Key)
+    fun encrypt(strToEncrypt: String, Key: String): String?
     {
         try
         {
-            setKey(Key);
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE,secretKey,ivspec);
-            return Base64.encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)),Base64.DEFAULT);
+            setKey(Key)
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
+            return Base64.encodeToString(
+                cipher.doFinal(strToEncrypt.toByteArray(StandardCharsets.UTF_8)),
+                Base64.DEFAULT
+            )
         }
-        catch (Exception e)
+        catch (e: Exception)
         {
-            e.printStackTrace();
+            e.printStackTrace()
         }
-        return null;
+        return null
     }
 
-    public static String decrypt(String strToDecrypt, String Key)
+    fun decrypt(strToDecrypt: String?, Key: String): String?
     {
         try
         {
-            setKey(Key);
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-            cipher.init(Cipher.DECRYPT_MODE,secretKey,ivspec);
-            return new String(cipher.doFinal(Base64.decode(strToDecrypt,Base64.DEFAULT)),
-                    StandardCharsets.UTF_8);
+            setKey(Key)
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
+            return String(
+                cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)),
+                StandardCharsets.UTF_8
+            )
         }
-        catch (Exception e)
+        catch (e: Exception)
         {
-            e.printStackTrace();
+            e.printStackTrace()
         }
-        return null;
+        return null
     }
 
-    public static String getByteArrayFromBitmap(Bitmap bitmap)
+    fun getEncryptedImageAsByteArray(bitmap: Bitmap, key: String): ByteArray?
     {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-        return Base64.encodeToString(bos.toByteArray(), Base64.DEFAULT);
+        try
+        {
+            setKey(key)
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
+            val baos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            return cipher.doFinal(baos.toByteArray())
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return null
     }
 
-    public static Bitmap getBitmapFromByteString(String byteString)
+    fun getDecryptedImageAsBitmap(bytes: ByteArray?, key: String): Bitmap?
     {
-        byte[] imageBytes = Base64.decode(byteString, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        try
+        {
+            setKey(key)
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
+            val decryptedArray = cipher.doFinal(bytes)
+            return BitmapFactory.decodeByteArray(decryptedArray, 0, decryptedArray.size)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+        return null
     }
 }

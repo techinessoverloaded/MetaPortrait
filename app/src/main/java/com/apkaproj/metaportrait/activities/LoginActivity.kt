@@ -14,6 +14,7 @@ import com.apkaproj.metaportrait.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.apkaproj.metaportrait.R
 import com.apkaproj.metaportrait.helpers.PreferenceUtils
+import com.apkaproj.metaportrait.helpers.displayToast
 import com.techiness.progressdialoglibrary.ProgressDialog
 
 class LoginActivity : AppCompatActivity()
@@ -51,7 +52,7 @@ class LoginActivity : AppCompatActivity()
     {
         if (!validateEmail() || !validatePassword())
         {
-            Toast.makeText(this,"Make sure that you have entered the details properly !", Toast.LENGTH_LONG).show()
+            displayToast("Make sure that you have entered the details properly !")
         }
         else
         {
