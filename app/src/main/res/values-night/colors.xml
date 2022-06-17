@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<color name="primary">#77A7EF</color>
+<color name="primaryDark">#498AEA</color>
+<color name="secondary">#FEEAA5</color>
+<color name="fabColor">#009688</color>
+<color name="primaryText">#ffffff</color>
+<color name="secondaryText">#757575</color>
+<color name="landingBackgroundCenter">#DC000000</color>
+<color name="landingBackgroundEnd">#F6000000</color>
+<color name="buttonSavedImages">#2AC531</color>
+<color name="buttonEditNewImage">#FA9C11</color>
+<color name="buttonOpenCamera">#0091EA</color>
+<color name="buttonLogout">#E31506</color>
+<color name="black_color">#FF000000</color>
+<color name="white_color">#FFFFFFFF</color>
+<color name="img_selected_color">#06590A</color>
+</resources>

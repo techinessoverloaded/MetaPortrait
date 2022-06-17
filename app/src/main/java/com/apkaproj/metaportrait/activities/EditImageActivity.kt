@@ -125,6 +125,7 @@ class EditImageActivity : AppCompatActivity(), ImageFilterListener
                     FilteredImageActivity::class.java).also { filteredImageIntent ->
                     filteredImageIntent.putExtra(KEY_FILTERED_IMAGE_URI,savedImageUri)
                     startActivity(filteredImageIntent)
+                    finish()
                 }
             } ?: run {
                 saveFilteredImageDataState.error?.let { error ->

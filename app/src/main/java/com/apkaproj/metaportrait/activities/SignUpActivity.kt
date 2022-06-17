@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.techiness.progressdialoglibrary.ProgressDialog
 
-
 class SignUpActivity : AppCompatActivity()
 {
     private lateinit var binding : ActivitySignUpBinding
@@ -35,10 +34,10 @@ class SignUpActivity : AppCompatActivity()
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
         mAuth = FirebaseAuth.getInstance()
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            progressDialog = ProgressDialog(this,ProgressDialog.THEME_FOLLOW_SYSTEM)
+        progressDialog = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            ProgressDialog(this,ProgressDialog.THEME_FOLLOW_SYSTEM)
         else
-            progressDialog = ProgressDialog(this)
+            ProgressDialog(this)
         binding.switchToLoginButton.setOnClickListener {
             val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -148,48 +147,39 @@ class SignUpActivity : AppCompatActivity()
             email = binding.emailInputSignup.text.toString().trim()
             val password = binding.pwdInputSignup.text.toString().trim()
             name = binding.nameInputSignup.text.toString().trim()
-            val tempKey = RandomStringGenerator.getRandomString(18)
+            val tempKey = RandomStringGenerator.getRandomString(16)
             progressDialog.show()
-            mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener{ task: Task<AuthResult?> ->
-                    if (task.isSuccessful)
-                    {
-                        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-                        val userId = mAuth.currentUser!!.uid
-                        name = EncryptionUtils.encrypt(name,tempKey)
-                        email = EncryptionUtils.encrypt(name,tempKey)
-                        val user = User(name,email,userId,tempKey)
-                        db.collection("Users").document(userId)
-                            .set(user).addOnCompleteListener { taskWrite ->
-                                if (taskWrite.isSuccessful)
-                                {
-                                    progressDialog.dismiss()
-                                    preferenceUtils.needsDbUpdate = true
-                                    Toast.makeText(this,"User successfully registered ! Logging in now !",Toast.LENGTH_LONG).show()
-                                    startActivity(
-                                        Intent(
-                                            this@SignUpActivity,
-                                            MainActivity::class.java
-                                        )
-                                    )
-                                    finish()
-                                }
-                                else
-                                {
-                                    Log.d("ErrorWithDB",task.exception.toString())
-                                    mAuth.currentUser!!.delete()
-                                    progressDialog.dismiss()
-                                    Toast.makeText(this,"Failed to Register User ! Try Again !",Toast.LENGTH_LONG).show()
-                                }
-                            }
-                    }
-                    else
-                    {
+            mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+                val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+                val userId = mAuth.currentUser!!.uid
+                name = EncryptionUtils.encrypt(name,tempKey)
+                email = EncryptionUtils.encrypt(email,tempKey)
+                Log.d("name", name)
+                Log.d("email", email)
+                val user = User(name,email,userId,tempKey)
+                db.collection("Users").document(userId)
+                    .set(user).addOnSuccessListener {
                         progressDialog.dismiss()
-                        Log.d("ErrorWithAuth",task.exception.toString())
+                        preferenceUtils.needsDbUpdate = true
+                        Toast.makeText(this,"User successfully registered ! Logging in now !",Toast.LENGTH_LONG).show()
+                        startActivity(
+                            Intent(
+                                this@SignUpActivity,
+                                MainActivity::class.java
+                            )
+                        )
+                        finish()
+                    }.addOnFailureListener { exception ->
+                        Log.d("ErrorWithDB",exception.toString())
+                        mAuth.currentUser!!.delete()
+                        progressDialog.dismiss()
                         Toast.makeText(this,"Failed to Register User ! Try Again !",Toast.LENGTH_LONG).show()
                     }
-                }
+            }.addOnFailureListener { exception ->
+                progressDialog.dismiss()
+                Log.d("ErrorWithAuth", exception.toString())
+                Toast.makeText(this,"Failed to Register User ! Try Again !",Toast.LENGTH_LONG).show()
+            }
         }
     }
     private inner class InputValidation(private val vi: View) : TextWatcher

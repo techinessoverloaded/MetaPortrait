@@ -119,6 +119,7 @@
         android:layout_marginTop="25dp"
         android:backgroundTint="@color/buttonLogout"
         app:icon="@drawable/ic_logout"
+        app:iconTint="@color/white_color"
         app:iconGravity="textStart"
         android:fontFamily="@font/poppins_semi_bold"
         android:includeFontPadding="false"

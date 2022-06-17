@@ -12,9 +12,6 @@ import com.apkaproj.metaportrait.helpers.*
 import com.apkaproj.metaportrait.listeners.ImageSelectionListener
 import com.apkaproj.metaportrait.listeners.SavedImagesListener
 import com.apkaproj.metaportrait.viewmodels.SavedImagesViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -29,18 +26,6 @@ class SavedImageActivity : AppCompatActivity(), SavedImagesListener, ImageSelect
         binding = ActivitySavedImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupObserver()
-        val preferenceUtils = PreferenceUtils.getInstance(this)
-        if(preferenceUtils.needsDbUpdate)
-        {
-            val mAuth = FirebaseAuth.getInstance()
-            val userId = mAuth.currentUser!!.uid
-            val storageRef = Firebase.storage.reference
-            val imagesRef = storageRef.child("images")
-            if(viewModel.syncSavedImages(imagesRef.child(userId)))
-            {
-
-            }
-        }
         viewModel.loadSavedImages()
         setListeners()
     }

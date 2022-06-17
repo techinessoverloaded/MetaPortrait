@@ -1,11 +1,13 @@
 package com.apkaproj.metaportrait.activities
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
@@ -13,9 +15,17 @@ import android.widget.Toast
 import com.apkaproj.metaportrait.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.apkaproj.metaportrait.R
+import com.apkaproj.metaportrait.helpers.EncryptionUtils
+import com.apkaproj.metaportrait.helpers.IOUtils
 import com.apkaproj.metaportrait.helpers.PreferenceUtils
 import com.apkaproj.metaportrait.helpers.displayToast
+import com.apkaproj.metaportrait.models.User
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.techiness.progressdialoglibrary.ProgressDialog
+import java.io.File
+import java.io.FileOutputStream
 
 class LoginActivity : AppCompatActivity()
 {
@@ -63,12 +73,85 @@ class LoginActivity : AppCompatActivity()
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                 if(it.isSuccessful)
                 {
-                    progressDialog.dismiss()
                     with(PreferenceUtils.getInstance(this))
                     {
                         needsDbUpdate = true
                         isFirstTime = false
                     }
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    val userId = mAuth.currentUser!!.uid
+                    val fireStore = Firebase.firestore
+                    val storageRef = Firebase.storage.reference
+                    val imagesRef = storageRef.child("images")
+                    val userFolderReference = imagesRef.child(userId)
+                    var keyForDecryption: String? = null
+                    val ioUtils = IOUtils(this)
+                    val dir = ioUtils.getImagesDirectoryAsFile()
+                    fireStore.collection("Users")
+                        .document(userId)
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            val userObject = snapshot.toObject(User::class.java)
+                            keyForDecryption = userObject?.tempKey
+                            if (userObject == null)
+                            {
+                                Log.d("error","User Object is null")
+                                return@addOnSuccessListener
+                            }
+                        }.addOnFailureListener { exception ->
+                            exception.printStackTrace()
+                            return@addOnFailureListener
+                        }
+                    if(keyForDecryption == null)
+                    {
+                        Log.d("error","Decryption Key is null")
+                    }
+                    userFolderReference.listAll().addOnSuccessListener { result ->
+                        val items = result.items
+                        Log.d("Number of items on Cloud:",items.size.toString());
+                        if (items.isEmpty())
+                        {
+                            Log.d("error", "No images were found on the Cloud !")
+                            return@addOnSuccessListener
+                        }
+                        val oneMegabyte: Long = 1024 * 1024 * 10
+                        for (item in items)
+                        {
+                            val fileName = item.name
+                            item.getBytes(oneMegabyte).addOnSuccessListener { byteArray ->
+                                val bitmap =
+                                    EncryptionUtils.getDecryptedImageAsBitmap(byteArray, keyForDecryption!!)
+                                val file = File(dir, fileName)
+                                if (bitmap == null)
+                                {
+                                    Log.d("error", "Bitmap is null")
+                                    return@addOnSuccessListener
+                                }
+                                Log.d("fileName",fileName)
+                                Log.d("file",file.absolutePath)
+                                if(!file.exists())
+                                {
+                                    dir.mkdirs()
+                                    file.createNewFile()
+                                }
+                                with(FileOutputStream(file))
+                                {
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
+                                    flush()
+                                    close()
+                                }
+                                displayToast("Retrieved Image ${items.indexOf(item)+1} of ${items.size} from the Cloud !")
+                            }.addOnFailureListener { exception ->
+                                exception.printStackTrace()
+                                displayToast("Failed to retrieve Image ${items.indexOf(item)+1} of ${items.size} from the Cloud !")
+                            }
+                        }
+                    }.addOnFailureListener { exception ->
+                        Log.d("error","Error in retrieving images from Cloud !")
+                        exception.printStackTrace()
+                        return@addOnFailureListener
+                    }
+                    progressDialog.dismiss()
                     Toast.makeText(this,"Logged in successfully !",Toast.LENGTH_LONG).show()
                     startActivity(Intent(this@LoginActivity,MainActivity::class.java))
                     finish()

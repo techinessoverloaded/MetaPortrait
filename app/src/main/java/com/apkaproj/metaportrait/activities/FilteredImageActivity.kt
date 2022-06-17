@@ -352,4 +352,19 @@ class FilteredImageActivity : AppCompatActivity()
             renameDialog.show()
         }
     }
+
+    override fun onBackPressed()
+    {
+        if(isTaskRoot)
+        {
+            Intent(this@FilteredImageActivity, SavedImageActivity::class.java).also { intent ->
+                finish()
+                startActivity(intent)
+            }
+        }
+        else
+        {
+            super.onBackPressed()
+        }
+    }
 }

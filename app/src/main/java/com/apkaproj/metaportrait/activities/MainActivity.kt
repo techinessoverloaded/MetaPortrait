@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -136,7 +137,8 @@ class MainActivity : AppCompatActivity()
                 if (it.isSuccessful)
                 {
                     userObject = it.result!!.toObject(User::class.java)!!
-                    userName = EncryptionUtils.decrypt(userObject.name, userObject.tempKey).toString()
+                    Log.d("userObject", userObject.toString());
+                    userName = EncryptionUtils.decrypt(userObject.name, userObject.tempKey)
                     binding.textTitle.text = "Welcome to MetaPortrait, $userName !"
                 }
                 else

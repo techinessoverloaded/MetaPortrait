@@ -2,6 +2,7 @@ package com.apkaproj.metaportrait.adapters
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -9,8 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.apkaproj.metaportrait.models.Image
 import com.apkaproj.metaportrait.databinding.ItemContainerSavedImageBinding
 import com.apkaproj.metaportrait.R
+import com.apkaproj.metaportrait.helpers.displayToast
 import com.apkaproj.metaportrait.listeners.ImageSelectionListener
 import com.apkaproj.metaportrait.listeners.SavedImagesListener
+import com.apkaproj.metaportrait.models.User
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class SavedImagesAdapter(private val savedImages: List<Image>,
                          private val savedImagesListener : SavedImagesListener,
@@ -105,12 +112,43 @@ RecyclerView.Adapter<SavedImagesAdapter.SavedImageViewHolder>()
 
     fun deleteSelectedImages()
     {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        var keyForDecryption: String? = null
+        val fireStore = Firebase.firestore
+        fireStore.collection("Users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val userObject = snapshot.toObject(User::class.java)
+                keyForDecryption = userObject?.tempKey
+                if (userObject == null)
+                {
+                    Log.d("error","User Object is null")
+                    return@addOnSuccessListener
+                }
+            }.addOnFailureListener { exception ->
+                exception.printStackTrace()
+                return@addOnFailureListener
+            }
+        if(keyForDecryption == null)
+        {
+            Log.d("error","Decryption Key is null")
+        }
+        val storageRef = Firebase.storage.reference
+        val imagesRef = storageRef.child("images")
+        val userFolderRef = imagesRef.child(userId)
         if(noOfSelectedImages > 0)
         {
             selectedImages.forEach { image ->
                 if(image.file.delete())
                 {
                     (savedImages as ArrayList).remove(image)
+                    val fileRef = userFolderRef.child(image.file.name)
+                    fileRef.delete().addOnSuccessListener {
+                        context.displayToast("Deleted Image ${image.file.name} from Cloud too successfully !")
+                    }.addOnFailureListener {
+                        context.displayToast("Failed to delete Image ${image.file.name} from Cloud !")
+                    }
                     notifyDataSetChanged()
                 }
                 else

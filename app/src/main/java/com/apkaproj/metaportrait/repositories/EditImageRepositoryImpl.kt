@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.core.content.FileProvider
 import com.apkaproj.metaportrait.helpers.EncryptionUtils
 import com.apkaproj.metaportrait.models.ImageFilter
@@ -483,12 +484,14 @@ class EditImageRepositoryImpl(private val context : Context) : EditImageReposito
                 if(userObject == null || keyForEncryption == null)
                 {
                     context.displayToast("Error in backing up images to the Cloud !")
+                    Log.d("fromEditImageRepository","userObject: $userObject, keyForEncryption: $keyForEncryption")
                     return@addOnSuccessListener
                 }
                 val byteArray = EncryptionUtils.getEncryptedImageAsByteArray(bitmap, keyForEncryption!!)
                 if(byteArray == null)
                 {
                     context.displayToast("Error in backing up images to the Cloud !")
+                    Log.d("fromEditImageRepository","byteArray: $byteArray")
                     return@addOnSuccessListener
                 }
                 val uploadTask = userImagesRef.putBytes(byteArray)
